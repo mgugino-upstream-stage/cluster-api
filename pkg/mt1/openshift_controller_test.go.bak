@@ -1,0 +1,37 @@
+package machine
+
+import (
+    "time"
+    "testing"
+    "errors"
+    controllerError "github.com/openshift/cluster-api/pkg/controller/error"
+)
+
+func mockDrainNode(shouldDelay bool) error {
+    if shouldDelay {
+        return &controllerError.RequeueAfterError{RequeueAfter: 20 * time.Second}
+    }
+    return errors.New("other error")
+}
+
+func TestDelayAfterDrainFail(t *testing.T) {
+    tCases :=  []struct {
+        shouldDelay bool
+        expectedErr bool
+    }{
+        {
+            shouldDelay: true,
+            expectedErr: false,
+        },
+        {
+            shouldDelay: false,
+            expectedErr: true,
+        },
+    }
+    for i, tc := range tCases {
+        _, err := delayAfterDrainFail(mockDrainNode(tc.shouldDelay))
+        if err != nil && tc.expectedErr == false {
+            t.Fatalf("case %v received unexpected error type", i)
+        }
+    }
+}

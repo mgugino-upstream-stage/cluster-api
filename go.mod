@@ -5,9 +5,11 @@ go 1.12
 require (
 	github.com/Azure/go-autorest/autorest v0.2.0 // indirect
 	github.com/davecgh/go-spew v1.1.1
+	github.com/go-log/log v0.1.1-0.20181211034820-a514cf01a3eb
 	github.com/gophercloud/gophercloud v0.2.0 // indirect
 	github.com/onsi/ginkgo v1.8.0
 	github.com/onsi/gomega v1.5.0
+	github.com/openshift/kubernetes-drain v0.0.0-20180831174519-c2e51be1758e
 	github.com/pkg/errors v0.8.1
 	github.com/sergi/go-diff v1.0.0
 	github.com/spf13/cobra v0.0.3

@@ -28,6 +28,9 @@ github.com/davecgh/go-spew/spew
 github.com/dgrijalva/jwt-go
 # github.com/evanphx/json-patch v4.5.0+incompatible
 github.com/evanphx/json-patch
+# github.com/go-log/log v0.1.1-0.20181211034820-a514cf01a3eb
+github.com/go-log/log/info
+github.com/go-log/log
 # github.com/go-logr/logr v0.1.0
 github.com/go-logr/logr
 # github.com/go-logr/zapr v0.1.0
@@ -129,6 +132,8 @@ github.com/onsi/gomega/matchers/support/goraph/bipartitegraph
 github.com/onsi/gomega/matchers/support/goraph/edge
 github.com/onsi/gomega/matchers/support/goraph/node
 github.com/onsi/gomega/matchers/support/goraph/util
+# github.com/openshift/kubernetes-drain v0.0.0-20180831174519-c2e51be1758e
+github.com/openshift/kubernetes-drain
 # github.com/pborman/uuid v0.0.0-20170612153648-e790cca94e6c
 github.com/pborman/uuid
 # github.com/pkg/errors v0.8.1
