@@ -31,6 +31,7 @@ type MachineV1beta1Interface interface {
 	MachineClassesGetter
 	MachineDeploymentsGetter
 	MachineSetsGetter
+	SmartMachineSetsGetter
 }
 
 // MachineV1beta1Client is used to interact with features provided by the machine.openshift.io group.
@@ -52,6 +53,10 @@ func (c *MachineV1beta1Client) MachineDeployments(namespace string) MachineDeplo
 
 func (c *MachineV1beta1Client) MachineSets(namespace string) MachineSetInterface {
 	return newMachineSets(c, namespace)
+}
+
+func (c *MachineV1beta1Client) SmartMachineSets(namespace string) SmartMachineSetInterface {
+	return newSmartMachineSets(c, namespace)
 }
 
 // NewForConfig creates a new MachineV1beta1Client for the given config.

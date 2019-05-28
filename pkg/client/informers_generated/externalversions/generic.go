@@ -74,6 +74,8 @@ func (f *sharedInformerFactory) ForResource(resource schema.GroupVersionResource
 		return &genericInformer{resource: resource.GroupResource(), informer: f.Machine().V1beta1().MachineDeployments().Informer()}, nil
 	case v1beta1.SchemeGroupVersion.WithResource("machinesets"):
 		return &genericInformer{resource: resource.GroupResource(), informer: f.Machine().V1beta1().MachineSets().Informer()}, nil
+	case v1beta1.SchemeGroupVersion.WithResource("smartmachinesets"):
+		return &genericInformer{resource: resource.GroupResource(), informer: f.Machine().V1beta1().SmartMachineSets().Informer()}, nil
 
 	}
 

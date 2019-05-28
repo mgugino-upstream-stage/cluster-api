@@ -32,6 +32,8 @@ type Interface interface {
 	MachineDeployments() MachineDeploymentInformer
 	// MachineSets returns a MachineSetInformer.
 	MachineSets() MachineSetInformer
+	// SmartMachineSets returns a SmartMachineSetInformer.
+	SmartMachineSets() SmartMachineSetInformer
 }
 
 type version struct {
@@ -63,4 +65,9 @@ func (v *version) MachineDeployments() MachineDeploymentInformer {
 // MachineSets returns a MachineSetInformer.
 func (v *version) MachineSets() MachineSetInformer {
 	return &machineSetInformer{factory: v.factory, namespace: v.namespace, tweakListOptions: v.tweakListOptions}
+}
+
+// SmartMachineSets returns a SmartMachineSetInformer.
+func (v *version) SmartMachineSets() SmartMachineSetInformer {
+	return &smartMachineSetInformer{factory: v.factory, namespace: v.namespace, tweakListOptions: v.tweakListOptions}
 }

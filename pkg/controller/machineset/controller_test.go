@@ -68,7 +68,7 @@ func TestMachineSetToMachines(t *testing.T) {
 			OwnerReferences: []metav1.OwnerReference{
 				{
 					Name:       "Owner",
-					Kind:       "MachineSet",
+					Kind:       "SmartMachineSet",
 					Controller: &controller,
 				},
 			},
@@ -149,12 +149,12 @@ func TestMachineSetToMachines(t *testing.T) {
 func TestShouldExcludeMachine(t *testing.T) {
 	controller := true
 	testCases := []struct {
-		machineSet v1beta1.MachineSet
+		machineSet v1beta1.SmartMachineSet
 		machine    v1beta1.Machine
 		expected   bool
 	}{
 		{
-			machineSet: v1beta1.MachineSet{},
+			machineSet: v1beta1.SmartMachineSet{},
 			machine: v1beta1.Machine{
 				ObjectMeta: metav1.ObjectMeta{
 					Name:      "withNoMatchingOwnerRef",
@@ -162,7 +162,7 @@ func TestShouldExcludeMachine(t *testing.T) {
 					OwnerReferences: []metav1.OwnerReference{
 						{
 							Name:       "Owner",
-							Kind:       "MachineSet",
+							Kind:       "SmartMachineSet",
 							Controller: &controller,
 						},
 					},
@@ -171,7 +171,7 @@ func TestShouldExcludeMachine(t *testing.T) {
 			expected: true,
 		},
 		{
-			machineSet: v1beta1.MachineSet{
+			machineSet: v1beta1.SmartMachineSet{
 				Spec: v1beta1.MachineSetSpec{
 					Selector: metav1.LabelSelector{
 						MatchLabels: map[string]string{
@@ -192,7 +192,7 @@ func TestShouldExcludeMachine(t *testing.T) {
 			expected: false,
 		},
 		{
-			machineSet: v1beta1.MachineSet{},
+			machineSet: v1beta1.SmartMachineSet{},
 			machine: v1beta1.Machine{
 				ObjectMeta: metav1.ObjectMeta{
 					Name:              "withDeletionTimestamp",
@@ -221,7 +221,7 @@ func TestAdoptOrphan(t *testing.T) {
 			Name: "orphanMachine",
 		},
 	}
-	ms := v1beta1.MachineSet{
+	ms := v1beta1.SmartMachineSet{
 		ObjectMeta: metav1.ObjectMeta{
 			Name: "adoptOrphanMachine",
 		},
@@ -229,7 +229,7 @@ func TestAdoptOrphan(t *testing.T) {
 	controller := true
 	blockOwnerDeletion := true
 	testCases := []struct {
-		machineSet v1beta1.MachineSet
+		machineSet v1beta1.SmartMachineSet
 		machine    v1beta1.Machine
 		expected   []metav1.OwnerReference
 	}{
@@ -239,7 +239,7 @@ func TestAdoptOrphan(t *testing.T) {
 			expected: []metav1.OwnerReference{
 				{
 					APIVersion:         v1beta1.SchemeGroupVersion.String(),
-					Kind:               "MachineSet",
+					Kind:               "SmartMachineSet",
 					Name:               "adoptOrphanMachine",
 					UID:                "",
 					Controller:         &controller,

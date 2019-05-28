@@ -35,7 +35,7 @@ const (
 	statusUpdateRetries = 1
 )
 
-func (c *ReconcileMachineSet) calculateStatus(ms *v1beta1.MachineSet, filteredMachines []*v1beta1.Machine) v1beta1.MachineSetStatus {
+func (c *ReconcileMachineSet) calculateStatus(ms *v1beta1.SmartMachineSet, filteredMachines []*v1beta1.Machine) v1beta1.MachineSetStatus {
 	newStatus := ms.Status
 	// Count the number of machines that have labels matching the labels of the machine
 	// template of the replica set, the matching machines may have more
@@ -71,7 +71,7 @@ func (c *ReconcileMachineSet) calculateStatus(ms *v1beta1.MachineSet, filteredMa
 }
 
 // updateMachineSetStatus attempts to update the Status.Replicas of the given MachineSet, with a single GET/PUT retry.
-func updateMachineSetStatus(c client.Client, ms *v1beta1.MachineSet, newStatus v1beta1.MachineSetStatus) (*v1beta1.MachineSet, error) {
+func updateMachineSetStatus(c client.Client, ms *v1beta1.SmartMachineSet, newStatus v1beta1.MachineSetStatus) (*v1beta1.SmartMachineSet, error) {
 	// This is the steady state. It happens when the MachineSet doesn't have any expectations, since
 	// we do a periodic relist every 30s. If the generations differ but the replicas are
 	// the same, a caller might've resized to the same replica count.

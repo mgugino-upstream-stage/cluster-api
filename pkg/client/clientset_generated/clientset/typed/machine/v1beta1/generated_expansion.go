@@ -25,3 +25,5 @@ type MachineClassExpansion interface{}
 type MachineDeploymentExpansion interface{}
 
 type MachineSetExpansion interface{}
+
+type SmartMachineSetExpansion interface{}

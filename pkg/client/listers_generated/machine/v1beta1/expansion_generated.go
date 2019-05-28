@@ -49,3 +49,11 @@ type MachineSetListerExpansion interface{}
 // MachineSetNamespaceListerExpansion allows custom methods to be added to
 // MachineSetNamespaceLister.
 type MachineSetNamespaceListerExpansion interface{}
+
+// SmartMachineSetListerExpansion allows custom methods to be added to
+// SmartMachineSetLister.
+type SmartMachineSetListerExpansion interface{}
+
+// SmartMachineSetNamespaceListerExpansion allows custom methods to be added to
+// SmartMachineSetNamespaceLister.
+type SmartMachineSetNamespaceListerExpansion interface{}

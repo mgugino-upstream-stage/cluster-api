@@ -10,6 +10,7 @@ go_library(
         "machineclass.go",
         "machinedeployment.go",
         "machineset.go",
+        "smartmachineset.go",
     ],
     importpath = "github.com/openshift/cluster-api/pkg/client/clientset_generated/clientset/typed/machine/v1beta1",
     visibility = ["//visibility:public"],

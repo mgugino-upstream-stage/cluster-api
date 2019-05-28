@@ -25,12 +25,12 @@ import (
 
 func TestHasMatchingLabels(t *testing.T) {
 	testCases := []struct {
-		machineSet v1beta1.MachineSet
+		machineSet v1beta1.SmartMachineSet
 		machine    v1beta1.Machine
 		expected   bool
 	}{
 		{
-			machineSet: v1beta1.MachineSet{
+			machineSet: v1beta1.SmartMachineSet{
 				Spec: v1beta1.MachineSetSpec{
 					Selector: metav1.LabelSelector{
 						MatchLabels: map[string]string{
@@ -50,7 +50,7 @@ func TestHasMatchingLabels(t *testing.T) {
 			expected: true,
 		},
 		{
-			machineSet: v1beta1.MachineSet{
+			machineSet: v1beta1.SmartMachineSet{
 				Spec: v1beta1.MachineSetSpec{
 					Selector: metav1.LabelSelector{
 						MatchLabels: map[string]string{

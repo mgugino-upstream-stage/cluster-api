@@ -56,13 +56,13 @@ func TestReconcile(t *testing.T) {
 
 	testCases := []struct {
 		name            string
-		instance        *machinev1beta1.MachineSet
+		instance        *machinev1beta1.SmartMachineSet
 		expectedRequest reconcile.Request
 		verifyFnc       func()
 	}{
 		{
 			name: "Refuse invalid machineset (with invalid matching labels)",
-			instance: &machinev1beta1.MachineSet{
+			instance: &machinev1beta1.SmartMachineSet{
 				ObjectMeta: metav1.ObjectMeta{Name: "invalidfoo", Namespace: "default"},
 				Spec: machinev1beta1.MachineSetSpec{
 					Replicas: &replicas,
@@ -88,7 +88,7 @@ func TestReconcile(t *testing.T) {
 		},
 		{
 			name: "Create the MachineSet object and expect Reconcile to be called and the Machines to be created",
-			instance: &machinev1beta1.MachineSet{
+			instance: &machinev1beta1.SmartMachineSet{
 				ObjectMeta: metav1.ObjectMeta{Name: "foo", Namespace: "default"},
 				Spec: machinev1beta1.MachineSetSpec{
 					Replicas: &replicas,

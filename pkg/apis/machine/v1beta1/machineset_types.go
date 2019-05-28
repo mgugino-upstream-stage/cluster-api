@@ -43,6 +43,22 @@ type MachineSet struct {
 	Status MachineSetStatus `json:"status,omitempty"`
 }
 
+// +genclient
+// +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
+
+/// [SmartMachineSet]
+// SmartMachineSet ensures that a specified number of machines replicas are running at any given time.
+// +k8s:openapi-gen=true
+// +kubebuilder:subresource:status
+// +kubebuilder:subresource:scale:specpath=.spec.replicas,statuspath=.status.replicas,selectorpath=.status.labelSelector
+type SmartMachineSet struct {
+	metav1.TypeMeta   `json:",inline"`
+	metav1.ObjectMeta `json:"metadata,omitempty"`
+
+	Spec   MachineSetSpec   `json:"spec,omitempty"`
+	Status MachineSetStatus `json:"status,omitempty"`
+}
+
 /// [MachineSet]
 
 /// [MachineSetSpec]
@@ -159,8 +175,44 @@ func (m *MachineSet) Validate() field.ErrorList {
 	return errors
 }
 
+func (m *SmartMachineSet) Validate() field.ErrorList {
+	errors := field.ErrorList{}
+
+	// validate spec.selector and spec.template.labels
+	fldPath := field.NewPath("spec")
+	errors = append(errors, metav1validation.ValidateLabelSelector(&m.Spec.Selector, fldPath.Child("selector"))...)
+	if len(m.Spec.Selector.MatchLabels)+len(m.Spec.Selector.MatchExpressions) == 0 {
+		errors = append(errors, field.Invalid(fldPath.Child("selector"), m.Spec.Selector, "empty selector is not valid for MachineSet."))
+	}
+	selector, err := metav1.LabelSelectorAsSelector(&m.Spec.Selector)
+	if err != nil {
+		errors = append(errors, field.Invalid(fldPath.Child("selector"), m.Spec.Selector, "invalid label selector."))
+	} else {
+		labels := labels.Set(m.Spec.Template.Labels)
+		if !selector.Matches(labels) {
+			errors = append(errors, field.Invalid(fldPath.Child("template", "metadata", "labels"), m.Spec.Template.Labels, "`selector` does not match template `labels`"))
+		}
+	}
+
+	return errors
+}
+
 // DefaultingFunction sets default MachineSet field values
 func (m *MachineSet) Default() {
+	log.Printf("Defaulting fields for MachineSet %s\n", m.Name)
+
+	if m.Spec.Replicas == nil {
+		m.Spec.Replicas = new(int32)
+		*m.Spec.Replicas = 1
+	}
+
+	if len(m.Namespace) == 0 {
+		m.Namespace = metav1.NamespaceDefault
+	}
+}
+
+// DefaultingFunction sets default MachineSet field values
+func (m *SmartMachineSet) Default() {
 	log.Printf("Defaulting fields for MachineSet %s\n", m.Name)
 
 	if m.Spec.Replicas == nil {
@@ -182,6 +234,16 @@ type MachineSetList struct {
 	Items           []MachineSet `json:"items"`
 }
 
+// +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
+
+// SmartMachineSetList contains a list of MachineSet
+type SmartMachineSetList struct {
+	metav1.TypeMeta `json:",inline"`
+	metav1.ListMeta `json:"metadata,omitempty"`
+	Items           []SmartMachineSet `json:"items"`
+}
+
 func init() {
 	SchemeBuilder.Register(&MachineSet{}, &MachineSetList{})
+	SchemeBuilder.Register(&SmartMachineSet{}, &SmartMachineSetList{})
 }
