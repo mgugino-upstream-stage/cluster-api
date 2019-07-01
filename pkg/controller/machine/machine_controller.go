@@ -25,6 +25,7 @@ import (
 	"github.com/pkg/errors"
 	"github.com/go-log/log/info"
 	corev1 "k8s.io/api/core/v1"
+	//corev1Client "k8s.io/client-go/kubernetes/typed/core/v1"
 	apierrors "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	kubedrain "github.com/openshift/kubernetes-drain"
@@ -161,7 +162,7 @@ func (r *ReconcileMachine) Reconcile(request reconcile.Request) (reconcile.Resul
 		// by cloud controller manager. In that case some machines would never get
 		// deleted without a manual intervention.
 		if _, exists := m.ObjectMeta.Annotations[ExcludeNodeDrainingAnnotation]; !exists && m.Status.NodeRef != nil {
-			if err := r.drainNode(m); err != nil {
+			if err := r.drainNode(cluster, m); err != nil {
 				return reconcile.Result{}, err
 			}
 		}
@@ -255,11 +256,31 @@ func (r *ReconcileMachine) deleteNode(ctx context.Context, cluster *clusterv1.Cl
 	return corev1Remote.Nodes().Delete(name, &metav1.DeleteOptions{})
 }
 
-func (r *ReconcileMachine) drainNode(machine *clusterv1.Machine) error {
-	kubeClient, err := kubernetes.NewForConfig(r.config)
-	if err != nil {
-		return fmt.Errorf("unable to build kube client: %v", err)
+func (r *ReconcileMachine) drainNode(cluster *clusterv1.Cluster, machine *clusterv1.Machine) error {
+	var kubeClient kubernetes.Interface
+	if cluster == nil {
+		var err error
+		kubeClient, err = kubernetes.NewForConfig(r.config)
+		if err != nil {
+			return fmt.Errorf("unable to build kube client: %v", err)
+		}
+	}  else {
+		// Otherwise, proceed to get the remote cluster client and get the Node.
+		remoteClient, err := remote.NewClusterClient(r.Client, cluster)
+		if err != nil {
+			klog.Errorf("Error creating a remote client for cluster %q while deleting Machine %q, won't retry: %v",
+				cluster.Name, machine.Name, err)
+			return nil
+		}
+		var err2 error
+		kubeClient, err2 = kubernetes.NewForConfig(remoteClient.RESTConfig())
+		if err2 != nil {
+			klog.Errorf("Error creating a remote client for cluster %q while deleting Machine %q, won't retry: %v",
+				cluster.Name, machine.Name, err)
+			return nil
+		}
 	}
+
 	node, err := kubeClient.CoreV1().Nodes().Get(machine.Status.NodeRef.Name, metav1.GetOptions{})
 	if err != nil {
 		return fmt.Errorf("unable to get node %q: %v", machine.Status.NodeRef.Name, err)
