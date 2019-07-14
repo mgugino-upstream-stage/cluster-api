@@ -121,11 +121,11 @@ func (d *Helper) EvictPod(pod corev1.Pod, policyGroupVersion string) error {
 	return d.Client.PolicyV1beta1().Evictions(eviction.Namespace).Evict(eviction)
 }
 
-// GetPodsForDeletion receives resource info for a node, and returns those pods as PodDeleteList,
+// getPodsForDeletion receives resource info for a node, and returns those pods as PodDeleteList,
 // or error if it cannot list pods. All pods that are ready to be deleted can be obtained with .Pods(),
 // and string with all warning can be obtained with .Warnings(), and .Errors() for all errors that
 // occurred during deletion.
-func (d *Helper) GetPodsForDeletion(nodeName string) (*podDeleteList, []error) {
+func (d *Helper) getPodsForDeletion(nodeName string) (*podDeleteList, []error) {
 	labelSelector, err := labels.Parse(d.PodSelector)
 	if err != nil {
 		return nil, []error{err}

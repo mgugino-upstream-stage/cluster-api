@@ -64,7 +64,7 @@ func newReconciler(mgr manager.Manager) *ReconcileMachine {
 		Client:   mgr.GetClient(),
 		scheme:   mgr.GetScheme(),
 		recorder: mgr.GetEventRecorderFor(controllerName),
-		config: mgr.GetConfig(),
+		config:   mgr.GetConfig(),
 	}
 }
 
@@ -324,7 +324,6 @@ func (r *ReconcileMachine) getMachinesInCluster(ctx context.Context, namespace, 
 
 	return machines, nil
 }
-
 
 // Writer implements io.Writer interface as a pass-through for klog.
 type Writer struct {
