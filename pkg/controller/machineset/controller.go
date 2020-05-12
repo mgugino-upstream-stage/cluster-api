@@ -60,6 +60,10 @@ var (
 // Add creates a new MachineSet Controller and adds it to the Manager with default RBAC.
 // The Manager will set fields on the Controller and Start it when the Manager is Started.
 func Add(mgr manager.Manager) error {
+	rMRS := newMRSReconciler(mgr)
+	if err := addMRS(mgr, rMRS, rMRS.MachineToMRS); err != nil {
+		return err
+	}
 	r := newReconciler(mgr)
 	return add(mgr, r, r.MachineToMachineSets)
 }
@@ -156,12 +160,6 @@ func (r *ReconcileMachineSet) Reconcile(request reconcile.Request) (reconcile.Re
 		}
 		// Error reading the object - requeue the request.
 		return reconcile.Result{}, err
-	}
-
-	// Ignore deleted MachineSets, this can happen when foregroundDeletion
-	// is enabled
-	if machineSet.DeletionTimestamp != nil {
-		return reconcile.Result{}, nil
 	}
 
 	result, err := r.reconcile(ctx, machineSet)
